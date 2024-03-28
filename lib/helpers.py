@@ -1,4 +1,4 @@
-# import sqlite3
+from models.__init__ import CONN, CURSOR
 
 from models.grape import Grape
 from models.parentregion import ParentRegion
@@ -12,12 +12,12 @@ from models.subregion import SubRegion
 #     return conn, cursor
 
 def initialize_database():
-    Grape.get_all_grapes()
     Grape.create_table()
-    ParentRegion.get_all()
-    ParentRegion.create_table()
-    SubRegion.get_all_subregions()
+    Grape.get_all_grapes()
     SubRegion.create_table()
+    SubRegion.get_all_subregions()
+    ParentRegion.create_table()
+    ParentRegion.get_all()
 
 def search_database():
     while True:

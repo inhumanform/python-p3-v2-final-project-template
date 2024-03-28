@@ -1,14 +1,13 @@
 # Here we are going to handle user input, display messages, and interact with the db. Welcome screen, menu options, logic for the menu options, etc.
-
+from models.__init__ import CONN, CURSOR
 from helpers import (
-    connect_to_database, 
-    search_database, 
-  
+    initialize_database, 
+    search_database
 
 )
 
 def main():
-    connect_to_database('wine_database')
+    initialize_database()
 
     while True:
         welcome_screen()

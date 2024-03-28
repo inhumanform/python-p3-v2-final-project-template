@@ -22,6 +22,26 @@ class Grape:
         else:
             raise Exception("Grape names must be a string.")
         
+    def __repr__(self):
+        return f"<Grape {self.id}: Name = {self.name}, Color = {self.color}, Key Growing Regions = {self.key_growing_regions}, Parentage = {self.parentage}>"
+    
+    @classmethod
+    def create_table(cls):
+        sql = """
+          CREATE TABLE IF NOT EXISTS grape (
+          id INTEGER PRIMARY KEY,
+          name TEXT,
+          color TEXT
+          )"""
+        CURSOR.execute(sql)
+        CONN.commit() 
+        
+    
+    @classmethod
+    def instance_from_db(cls, row):
+        grape = cls(row[1])
+        grape.id = row[0]
+        return grape
     
     @property
     def color(self):
@@ -66,21 +86,6 @@ class Grape:
 
     # Store the validated parentage (list of strings) in a private attribute
         self._parentage = parentage_list
-    
-    @classmethod
-    def create_table(cls):
-        sql = """
-          CREATE TABLE IF NOT EXISTS grape (
-          id INTEGER PRIMARY KEY,
-          name TEXT,
-          color TEXT,
-          key_growing_region INTEGER,
-          FOREIGN KEY (key_growing_region) REFERENCES subregions(id)
-    
-          )
-        """
-        CURSOR.execute(sql)
-        CONN.commit() 
     
     @classmethod
     def drop_table(cls):
@@ -168,10 +173,3 @@ class Grape:
         else:
             print("This ID doesn't exist...")
             return None
-
-    
-
-        # query = f"SELECT * FROM {'grapes'}"
-        # cursor.execute(query)
-        # entries = cursor.fetchall()
-        # return entries

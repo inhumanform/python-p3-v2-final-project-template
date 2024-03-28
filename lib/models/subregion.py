@@ -2,6 +2,7 @@
 from models.__init__ import CONN, CURSOR
 from models.grape import Grape
 
+
 class SubRegion:
 
     all = []
@@ -36,17 +37,17 @@ class SubRegion:
             raise ValueError("Key growing regions must be a comma-separated string")
 
     
-    valid_grape_names = {grape.name.upper() for grape in Grape.get_all_grapes()}
+    # valid_grape_names = {grape.name.upper() for grape in Grape.get_all_grapes()}
 
-    varietal_list = varietal_param.strip().split(", ")
-    if not varietal_list:
-        raise ValueError("Key growing regions cannot be empty")
+    # varietal_list = varietal_param.strip().split(", ")
+    # if not varietal_list:
+    #     raise ValueError("Key growing regions cannot be empty")
 
-    invalid_names = [name for name in varietal_list if name.upper() not in valid_grape_names]
+    # invalid_names = [name for name in varietal_list if name.upper() not in valid_grape_names]
 
-    if invalid_names:
-        invalid_names_str = ", ".join(invalid_names)
-        raise ValueError(f"Invalid grape names: {invalid_names_str}")
+    # if invalid_names:
+    #     invalid_names_str = ", ".join(invalid_names)
+    #     raise ValueError(f"Invalid grape names: {invalid_names_str}")
 
 # Store the validated list of varietal names (uppercase) in a private attribute
     # self._key_varietals = [name.upper() for name in varietal_list]
@@ -88,15 +89,13 @@ class SubRegion:
     
     @classmethod
     def create_table(cls):
-        sql = '''
-        CREATE TABLE IF NOT EXISTS SubRegion (
+        sql = """
+        CREATE TABLE IF NOT EXISTS subregion (
         id INTEGER PRIMARY KEY,
         name TEXT,
-        key_varietals TEXT,
-        FOREIGN KEY (key_varietals) REFERENCES Grape(name)
         parent_region TEXT,
-        FOREIGN KEY (parent_region) REFERENCES ParentRegion(name)
-                )'''
+        climate TEXT
+        )"""
         CURSOR.execute(sql)
         CONN.commit() 
     
@@ -137,7 +136,7 @@ class SubRegion:
             SELECT *
             FROM subregion
         """
-        rows = CURSOR.execute(sql).fetchone()
+        rows = CURSOR.execute(sql).fetchall()
 
         cls.all = [cls.instance_from_db(row) for row in rows]
         return cls.all

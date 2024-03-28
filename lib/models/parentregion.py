@@ -83,7 +83,7 @@ class ParentRegion:
 
         sql = """
             SELECT *
-            FROM parentregion
+            FROM parent_region
         """
         rows = CURSOR.execute(sql).fetchall()
 
