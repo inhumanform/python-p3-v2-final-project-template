@@ -37,22 +37,6 @@ class SubRegion:
             raise ValueError("Key growing regions must be a comma-separated string")
 
     
-    # valid_grape_names = {grape.name.upper() for grape in Grape.get_all_grapes()}
-
-    # varietal_list = varietal_param.strip().split(", ")
-    # if not varietal_list:
-    #     raise ValueError("Key growing regions cannot be empty")
-
-    # invalid_names = [name for name in varietal_list if name.upper() not in valid_grape_names]
-
-    # if invalid_names:
-    #     invalid_names_str = ", ".join(invalid_names)
-    #     raise ValueError(f"Invalid grape names: {invalid_names_str}")
-
-# Store the validated list of varietal names (uppercase) in a private attribute
-    # self._key_varietals = [name.upper() for name in varietal_list]
-
-    
     @property
     def parent_region(self):
         return self._parent_region

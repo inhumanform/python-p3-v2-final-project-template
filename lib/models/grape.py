@@ -1,4 +1,5 @@
 from models.__init__ import CONN, CURSOR
+import ipdb
 
 class Grape:
 
@@ -7,6 +8,7 @@ class Grape:
     def __init__(self, name, color, key_growing_regions, parentage):
         self.name = name
         self.color = color
+        # ipdb.set_trace()
         self.key_growing_regions = key_growing_regions
         self.parentage = parentage
         self.id = None
@@ -18,12 +20,13 @@ class Grape:
     @name.setter
     def name(self, name_param):
         if(isinstance(name_param, str)):
+            # ipdb.set_trace()
             self._name = name_param
         else:
             raise Exception("Grape names must be a string.")
         
-    def __repr__(self):
-        return f"<Grape {self.id}: Name = {self.name}, Color = {self.color}, Key Growing Regions = {self.key_growing_regions}, Parentage = {self.parentage}>"
+    # def __repr__(self):
+    #     return f"<Grape {self.id}: Name = {self.name}, Color = {self.color}, Key Growing Regions = {self.key_growing_regions}, Parentage = {self.parentage}>"
     
     @classmethod
     def create_table(cls):
@@ -34,7 +37,8 @@ class Grape:
           color TEXT
           )"""
         CURSOR.execute(sql)
-        CONN.commit() 
+        # CONN.commit()
+        print("Data added successfully.") 
         
     
     @classmethod
@@ -50,6 +54,7 @@ class Grape:
     @color.setter
     def color(self, color_param):
         if not isinstance(color_param, str) or color_param.upper() not in ("RED", "WHITE", "GRIS"):
+            # ipdb.set_trace()
             raise ValueError(f"Color must be one of 'Red', 'White', or 'Gris' (case-insensitive)")
 
     
@@ -60,6 +65,7 @@ class Grape:
     @key_growing_regions.setter
     def key_growing_regions(self, key_growing_regions_param, str):
         if(isinstance(key_growing_regions_param, str)):
+            # ipdb.set_trace()
             self._key_growing_regions = key_growing_regions_param
         else:
             raise Exception("Growing Region must be a string.")
@@ -71,6 +77,7 @@ class Grape:
     @parentage.setter
     def parentage(self, parentage_param):
         if isinstance(parentage_param, str):
+            # ipdb.set_trace()
             raise ValueError("Parentage must be a string")
 
     # Split the string by comma and space, handling potential leading/trailing whitespace
@@ -96,10 +103,11 @@ class Grape:
     
     def save(self):
         sql = """
-          INSERT INTO grape (name) 
-          VALUES (?)
+          INSERT INTO grape (name, color, key_growing_regions) 
+          VALUES (?, ?, ?)
         """
-        CURSOR.execute(sql, (self.name,))
+
+        CURSOR.execute(sql, (self.name, self.color, self.key_growing_regions))
         CONN.commit()
 
         self.id = CURSOR.lastrowid
@@ -107,8 +115,8 @@ class Grape:
         Grape.all.append(self)
     
     @classmethod
-    def create(cls, name):
-        grape = cls(name)
+    def create(cls, name, color, key_growing_regions, parentage):
+        grape = cls(name, color, key_growing_regions, parentage)
         grape.save()
         return grape
 
