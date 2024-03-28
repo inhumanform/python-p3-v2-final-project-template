@@ -4,8 +4,7 @@ class Grape:
 
     all = []
 
-    def __init__(self, grape_id, name, color, key_growing_regions, parentage):
-        self.grape_id = grape_id
+    def __init__(self, name, color, key_growing_regions, parentage):
         self.name = name
         self.color = color
         self.key_growing_regions = key_growing_regions
@@ -16,17 +15,97 @@ class Grape:
     def name(self):
         return self._name
     
+    @name.setter
+    def name(self, name_param):
+        if(isinstance(name_param, str)):
+            self._name = name_param
+        else:
+            raise Exception("Grape names must be a string.")
+        
+    
     @property
     def color(self):
         return self._color
+    
+    @color.setter
+    def color(self, color_param):
+        if not isinstance(color_param, str) or color_param.upper() not in ("RED", "WHITE", "GRIS"):
+            raise ValueError(f"Color must be one of 'Red', 'White', or 'Gris' (case-insensitive)")
+
     
     @property
     def key_growing_regions(self):
         return self._key_growing_regions
     
+    @key_growing_regions.setter
+    def key_growing_regions(self, key_growing_regions_param, str):
+        if(isinstance(key_growing_regions_param, str)):
+            self._key_growing_regions = key_growing_regions_param
+        else:
+            raise Exception("Growing Region must be a string.")
+    
     @property
     def parentage(self):
         return self._parentage
+    
+    @parentage.setter
+    def parentage(self, parentage_param):
+        if isinstance(parentage_param, str):
+            raise ValueError("Parentage must be a string")
+
+    # Split the string by comma and space, handling potential leading/trailing whitespace
+        parentage_list = parentage_param.strip().split(", ")
+
+        if len(parentage_list) != 2:
+            raise ValueError("Parentage string must contain exactly two comma-separated names")
+
+    # Validate each name directly using list comprehension and database check
+        if any(name.upper() not in [grape.name.upper() for grape in Grape.get_all_grapes()] for name in parentage_list):
+            invalid_names = ", ".join([name for name in parentage_list if name.upper() not in [grape.name.upper() for grape in Grape.get_all_grapes()]])
+            raise ValueError(f"Parentage names {invalid_names} do not exist in the database")
+
+    # Store the validated parentage (list of strings) in a private attribute
+        self._parentage = parentage_list
+    
+    @classmethod
+    def create_table(cls):
+        sql = """
+          CREATE TABLE IF NOT EXISTS grape (
+          id INTEGER PRIMARY KEY,
+          name TEXT,
+          color TEXT,
+          key_growing_region INTEGER,
+          FOREIGN KEY (key_growing_region) REFERENCES subregions(id)
+    
+          )
+        """
+        CURSOR.execute(sql)
+        CONN.commit() 
+    
+    @classmethod
+    def drop_table(cls):
+        sql = """
+          DROP TABLE IF EXISTS grape;
+        """
+        CURSOR.execute(sql)
+    
+    def save(self):
+        sql = """
+          INSERT INTO grape (name) 
+          VALUES (?)
+        """
+        CURSOR.execute(sql, (self.name,))
+        CONN.commit()
+
+        self.id = CURSOR.lastrowid
+
+        Grape.all.append(self)
+    
+    @classmethod
+    def create(cls, name):
+        grape = cls(name)
+        grape.save()
+        return grape
 
     @classmethod
     def instance_from_db(cls, row):
@@ -38,9 +117,9 @@ class Grape:
     def get_all_grapes(cls):
         sql = """
             SELECT *
-            FROM grapes
+            FROM grape
         """
-        rows = CURSOR.execute(sql).fetchone()
+        rows = CURSOR.execute(sql).fetchall()
 
         cls.all = [cls.instance_from_db(row) for row in rows]
         return cls.all
@@ -48,7 +127,7 @@ class Grape:
     @classmethod
     def find_by_name(cls,name):
         sql = """
-        SELECT * FROM grapes
+        SELECT * FROM grape
         WHERE name = ?
         """
         row = CURSOR.execute(sql, (name,)).fetchone()
@@ -62,7 +141,7 @@ class Grape:
     @classmethod
     def find_by_region(cls, key_growing_regions):
         sql = """
-        SELECT * FROM grapes
+        SELECT * FROM grape
         WHERE key_growing_regions = ?
         """
         row = CURSOR.execute(sql, (key_growing_regions)). fetchone()
@@ -78,7 +157,7 @@ class Grape:
 
         sql = """
             SELECT * 
-            FROM grapes
+            FROM grape
             WHERE id = ?
         """
 
@@ -90,6 +169,7 @@ class Grape:
             print("This ID doesn't exist...")
             return None
 
+    
 
         # query = f"SELECT * FROM {'grapes'}"
         # cursor.execute(query)
