@@ -80,18 +80,17 @@ class Grape:
             # ipdb.set_trace()
             raise ValueError("Parentage must be a string")
 
-    # Split the string by comma and space, handling potential leading/trailing whitespace
+    # Split the string by comma and space, handling extra spaces
         parentage_list = parentage_param.strip().split(", ")
 
         if len(parentage_list) != 2:
             raise ValueError("Parentage string must contain exactly two comma-separated names")
 
-    # Validate each name directly using list comprehension and database check
         if any(name.upper() not in [grape.name.upper() for grape in Grape.get_all_grapes()] for name in parentage_list):
             invalid_names = ", ".join([name for name in parentage_list if name.upper() not in [grape.name.upper() for grape in Grape.get_all_grapes()]])
             raise ValueError(f"Parentage names {invalid_names} do not exist in the database")
 
-    # Store the validated parentage (list of strings) in a private attribute
+   
         self._parentage = parentage_list
     
     @classmethod

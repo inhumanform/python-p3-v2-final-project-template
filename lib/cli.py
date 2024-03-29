@@ -27,7 +27,7 @@ def main():
             exit_program()
             break
         else:
-            print("Pick an actual option, dumbass")
+            print("Invalid option")
         
 
 def welcome_screen():
@@ -59,7 +59,7 @@ def add_to_database():
 
 
 def exit_program():
-    print("Later, nerd...")
+    print("Later!")
     exit()
 
 if __name__ == "__main__":
