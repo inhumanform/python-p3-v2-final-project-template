@@ -12,7 +12,7 @@ def main():
     while True:
         welcome_screen()
         display_menu()
-        user_input = input ("\n\nWhere do you wanna go?\n")
+        user_input = input ("\n\nPlease choose an option:\n")
         
         if (user_input == '1'):  
             search_database()  

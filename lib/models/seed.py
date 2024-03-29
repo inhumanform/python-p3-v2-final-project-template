@@ -10,6 +10,7 @@ if __name__ == "__main__":
 
     CURSOR.execute("DELETE FROM grape")
     CURSOR.execute("DELETE FROM subregion")
+    CURSOR.execute("DELETE FROM parentregion")
     CONN.commit()
 
     Grape.create("Chardonnay", "White", "Chablis, Napa Valley", "Pinot, Gouais")
@@ -27,3 +28,5 @@ if __name__ == "__main__":
     ParentRegion.create("Oregon", "USA")
     ParentRegion.create("Bordeaux", "France")
     ParentRegion.create("Piedmonte", "Italy")
+
+    CONN.commit()
